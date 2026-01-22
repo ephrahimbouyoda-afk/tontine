@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: auto; padding: 20px;">
+
+    <div style="text-align: center; margin: 40px 0;">
+        <h1 style="color: #2c3e50;">Bienvenue sur ta Tontine, {{ request.user.username|default:"visiteur" }}</h1>
+        <p style="color: #7f8c8d;">Rejoignez un groupe et commencez à épargner ensemble en toute sécurité.</p>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 5px solid #28a745; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; color: #2c3e50;">📊 Ton profil actuel</h3>
+        <p style="margin-bottom: 0;">Statut :
+            <span style="color: #28a745; font-weight: bold;">✅ Compte Actif & Vérifié</span>
+        </p>
+        <small style="color: #7f8c8d;">Vous pouvez participer librement à tous vos groupes.</small>
+    </div>
+    {% endif %}
+
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #28a745; padding-bottom: 10px; margin-bottom: 25px;">🌍 Groupes de tontine disponibles</h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+        {% for group in groups %}
+        <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h4 style="margin: 0 0 10px 0; font-size: 1.3em; color: #28a745;">{{ group.name }}</h4>
+                <p style="font-size: 1.1em;">Cotisation : <strong>{{ group.contribution_amount }} FCFA</strong></p>
+
+                <div style="margin: 15px 0; padding: 12px; background-color: #f1f9fe; border-radius: 8px; border-left: 4px solid #3498db;">
+                    <span style="color: #2c3e50; font-size: 0.9em; font-weight: bold;">🏆 Gagnant actuel : </span><br>
+                    {% if group.dernier_gagnant %}
+                        <span style="color: #3498db; font-weight: bold; font-size: 1.1em;">{{ group.dernier_gagnant.username }}</span>
+                    {% else %}
+                        <span style="color: #95a5a6; font-style: italic; font-size: 0.9em;">En attente du tirage...</span>
+                    {% endif %}
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            </div>
+
+            {% if user.is_authenticated %}
+                <p style="font-weight: bold; font-size: 0.9em; color: #34495e;">📩 Rejoindre ce groupe :</p>
+                <form action="{% url 'submit_payment' group.id %}" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="amount" value="{{ group.contribution_amount }}">
+                    <input type="text" name="reference" placeholder="Code de transaction (OM/MoMo)" required
+                           style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9em;">
+                    <button type="submit" style="background-color: #28a745; color: white; border: none; padding: 12px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s;">
+                        Confirmer mon adhésion
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" style="display: block; text-align: center; background: #3498db; color: white; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                    Connectez-vous pour rejoindre
+                </a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p style="text-align: center; grid-column: 1 / -1; color: #95a5a6; padding: 40px; background: #f8f9fa; border-radius: 12px;">
+            Aucun groupe public n'est disponible. <br>
+            <span style="font-size: 0.9em;">Utilisez un lien d'invitation pour rejoindre un groupe privé.</span>
+        </p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

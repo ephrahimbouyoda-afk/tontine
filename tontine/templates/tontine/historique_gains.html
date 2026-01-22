@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 1100px; margin: auto; padding: 20px; font-family: 'Segoe UI', sans-serif;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #2c3e50; margin: 0;">📜 Historique des Gains</h1>
+<a href="{% url 'mon_espace' %}" class="btn-retour">Retour</a>    </div>
+
+    <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; background-color: #f8f9fa; color: #7f8c8d; border-bottom: 2px solid #eee;">
+                    <th style="padding: 15px;">Date & Heure</th>
+                    <th style="padding: 15px;">Groupe</th>
+                    <th style="padding: 15px;">Heureux Gagnant</th>
+                    <th style="padding: 15px; text-align: right;">Montant Perçu</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in historique %}
+                <tr style="border-bottom: 1px solid #f1f1f1; transition: 0.3s;" onmouseover="this.style.backgroundColor='#fcfcfc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <td style="padding: 15px; color: #95a5a6;">
+                        <span style="font-size: 0.9em;">{{ item.date_choix|date:"d/m/Y" }}</span><br>
+                        <small style="color: #bdc3c7;">{{ item.date_choix|date:"H:i" }}</small>
+                    </td>
+                    <td style="padding: 15px; font-weight: bold; color: #2c3e50;">{{ item.groupe.name }}</td>
+                    <td style="padding: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 35px; height: 35px; background: #3498db; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                {{ item.gagnant.username|slice:":1"|upper }}
+                            </div>
+                            <span style="font-weight: 600;">{{ item.gagnant.username }}</span>
+                        </div>
+                    </td>
+                    <td style="padding: 15px; text-align: right; font-weight: bold; color: #27ae60; font-size: 1.1em;">
+                        {{ item.montant_gagne|floatformat:0 }} FCFA
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 40px; text-align: center; color: #bdc3c7; font-style: italic;">
+                        Aucun gain n'a encore été enregistré.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
