@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 900px; margin: auto; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <h2 style="color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+        💼 Tableau de Bord Administrateur
+    </h2>
+
+    <div style="background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px;">
+        <h3 style="color: #2c3e50; border-bottom: 2px solid #28a745; padding-bottom: 10px;">📂 Mes Groupes Actifs</h3>
+        {% for groupe in mes_groupes %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #ecf0f1; border-radius: 10px; margin-bottom: 10px; background: #fcfcfc;">
+            <div>
+                <strong style="font-size: 1.1em; color: #28a745;">{{ groupe.name }}</strong><br>
+                <small style="color: #7f8c8d;">💰 Cotisation : {{ groupe.contribution_amount }} FCFA</small>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <a href="https://wa.me/?text=Bonjour ! Rejoint notre groupe de tontine '{{ groupe.name }}' en cliquant ici : {{ request.scheme }}://{{ request.get_host }}{% url 'rejoindre_via_lien' groupe.id %}"
+                   target="_blank"
+                   style="background: #25D366; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none; font-size: 0.9em; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                   📲 Inviter
+                </a>
+
+                <a href="{% url 'detail_groupe' groupe.id %}" style="background: #3498db; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em; font-weight: bold;">
+                    ⚙️ Gérer
+                </a>
+
+                <a href="{% url 'supprimer_groupe' groupe.id %}" onclick="return confirm('Attention ! Supprimer ce groupe effacera tous ses membres. Confirmer ?')" style="background: #e74c3c; color: white; padding: 8px 12px; border-radius: 5px; text-decoration: none;">
+                    🗑️
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <p style="text-align: center; color: #95a5a6; padding: 20px;">Aucun groupe créé pour le moment.</p>
+        {% endfor %}
+    </div>
+
+    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px;">
+        <h3 style="color: #2c3e50; border-bottom: 2px solid #f39c12; padding-bottom: 10px;">💳 Historique des Paiements Reçus</h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa; text-align: left;">
+                        <th style="padding: 12px;">Membre</th>
+                        <th style="padding: 12px;">Groupe</th>
+                        <th style="padding: 12px;">Référence</th>
+                        <th style="padding: 12px;">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trans in transactions_a_valider %}
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px;"><strong>{{ trans.membership.user.username }}</strong></td>
+                        <td style="padding: 12px;">{{ trans.membership.group.name }}</td>
+                        <td style="padding: 12px; color: #28a745; font-family: monospace;">{{ trans.reference_api }}</td>
+                        <td style="padding: 12px;">
+                            <span style="color: #28a745; font-weight: bold; font-size: 0.85em;">✅ Confirmé</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="padding: 30px; text-align: center; color: #888;">Aucune transaction enregistrée.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

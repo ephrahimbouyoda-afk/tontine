@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; padding: 30px; border-radius: 15px; background-color: white; box-shadow: 0px 10px 25px rgba(0,0,0,0.1); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    
+    <div style="text-align: center; margin-bottom: 25px;">
+        <h2 style="color: #2c3e50; margin-bottom: 10px;">🚀 Créer votre Groupe de Tontine</h2>
+        <p style="color: #7f8c8d; font-size: 0.95em;">En tant qu'administrateur, vous définissez les règles pour vos membres.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #34495e;">Nom du Groupe</label>
+            <input type="text" name="nom_groupe" placeholder="Ex: Tontine Famille Douala" required
+                   style="width: 100%; padding: 12px; border: 2px solid #ecf0f1; border-radius: 8px; font-size: 1em; outline: none;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #34495e;">Montant par membre (FCFA)</label>
+            <input type="number" name="montant_cotisation" placeholder="Ex: 25000" required
+                   style="width: 100%; padding: 12px; border: 2px solid #ecf0f1; border-radius: 8px; font-size: 1em;">
+            <small style="color: #95a5a6;">C'est le montant que chaque membre devra payer.</small>
+        </div>
+
+        <div style="background-color: #f8f9fa; border-left: 5px solid #28a745; padding: 15px; margin-bottom: 25px; border-radius: 4px;">
+            <p style="margin: 0; font-size: 0.85em; color: #2c3e50;">
+                <strong>💡 Sécurité Garantie :</strong>
+                L'utilisation de services comme <strong>CinetPay ou FedaPay</strong> assure la transparence des paiements.
+            </p>
+        </div>
+
+        <button type="submit" style="width: 100%; background-color: #28a745; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer;">
+            Lancer le groupe maintenant
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+def creer_groupe(request):
+    if request.method == "POST": # 1. On vérifie si on a cliqué
+        nom = request.POST.get('nom_groupe')
+        montant = request.POST.get('montant_cotisation')
+
+        # 2. On enregistre vraiment dans la base de données
+        TontineGroup.objects.create(
+            name=nom,
+            contribution_amount=montant,
+            admin_groupe=request.user
+        )
+        return redirect('tableau_bord_admin') # 3. On redirige
+
+    return render(request, 'tontine/creer_groupe.html')

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 500px; margin: auto; padding: 20px;">
+    <div class="card shadow p-4">
+        <h3 class="text-center">Choisir le mode de paiement</h3>
+        <hr>
+
+        <form id="paymentForm" method="POST">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="fw-bold">1. Sélectionnez votre opérateur :</label>
+                <div class="d-flex justify-content-around mt-2">
+                    <label style="cursor:pointer; text-align:center;">
+                        <input type="radio" name="operator" value="ORANGE" required> <br>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Orange_logo.svg/50px-Orange_logo.svg.png" width="50">
+                    </label>
+                    <label style="cursor:pointer; text-align:center;">
+                        <input type="radio" name="operator" value="MTN" required> <br>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/MTN_Logo.svg/50px-MTN_Logo.svg.png" width="50">
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="fw-bold">2. Votre numéro (9 chiffres) :</label>
+                <input type="text" id="phone_input" name="phone" class="form-control" placeholder="6xxxxxxxx" required>
+                <div id="error_msg" style="color: red; display: none; font-size: 0.9em; margin-top: 5px;"></div>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 fw-bold py-3">Payer maintenant</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('paymentForm').onsubmit = function(e) {
+    const phone = document.getElementById('phone_input').value;
+    const operator = document.querySelector('input[name="operator"]:checked').value;
+    const errorDiv = document.getElementById('error_msg');
+
+    // Séries camerounaises :
+    // MTN: 67, 68, 650-654
+    // Orange: 69, 655-659
+    const isMtn = /^(237)?(67|68|650|651|652|653|654)/.test(phone);
+    const isOrange = /^(237)?(69|655|656|657|658|659)/.test(phone);
+
+    if (operator === "ORANGE" && !isOrange) {
+        e.preventDefault();
+        errorDiv.innerText = "Ce numéro n'est pas un numéro Orange. Veuillez corriger.";
+        errorDiv.style.display = "block";
+    } else if (operator === "MTN" && !isMtn) {
+        e.preventDefault();
+        errorDiv.innerText = "Ce numéro n'est pas un numéro MTN. Veuillez corriger.";
+        errorDiv.style.display = "block";
+    }
+};
+</script>
+{% endblock %}

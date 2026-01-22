@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tontine App</title>
+    <style>
+        body { margin: 0; font-family: sans-serif; background-color: #f4f7f6; padding-top: 70px; }
+
+        /* Barre verte simplifiée */
+        .navbar {
+            background-color: #28a745;
+            position: fixed;
+            top: 0; width: 100%;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column; /* On empile sur mobile pour voir tout */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .nav-top {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 5px;
+            width: 100%;
+        }
+
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.75em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 50px;
+        }
+
+        .nav-icon { font-size: 1.5em; margin-bottom: 2px; }
+
+        /* Section utilisateur en dessous */
+        .user-bar {
+            background: rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 15px;
+            color: white;
+            font-size: 0.8em;
+        }
+
+        .btn-quitter {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .container { padding: 15px; max-width: 1100px; margin: auto; }
+
+        /* Ajustement spécial téléphone */
+        @media (max-width: 600px) {
+            body { padding-top: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-top">
+            <a href="{% url 'home' %}" class="nav-item">
+                <span class="nav-icon">💰</span><span>Tontine</span>
+            </a>
+            <a href="{% url 'mon_espace' %}" class="nav-item">
+                <span class="nav-icon">👤</span><span>Espace</span>
+            </a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'tableau_bord_admin' %}" class="nav-item">
+                    <span class="nav-icon">📊</span><span>Admin</span>
+                </a>
+                <a href="{% url 'creer_groupe' %}" class="nav-item">
+                    <span class="nav-icon">➕</span><span>Créer</span>
+                </a>
+            {% endif %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="user-bar">
+            <span>Salut, <b>{{ user.username }}</b></span>
+            <form action="{% url 'logout' %}" method="post" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="btn-quitter">Quitter</button>
+            </form>
+        </div>
+        {% endif %}
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>

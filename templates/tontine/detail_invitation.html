@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center;">
+    <h2 style="color: #2c3e50;">Bienvenue dans la Tontine !</h2>
+    <p>Vous avez été invité à rejoindre le groupe :</p>
+
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #28a745;">
+        <h3 style="color: #28a745;">{{ groupe.name }}</h3>
+        <p><strong>Cotisation :</strong> {{ groupe.contribution_amount }} FCFA</p>
+    </div>
+
+    {% if not user.is_authenticated %}
+        <p>Pour continuer, vous devez d'abord vous créer un compte.</p>
+        <a href="{% url 'register' %}" class="btn btn-primary">Créer mon compte</a>
+    {% else %}
+        <p>Bonjour {{ user.username }}, prêt à rejoindre ce groupe ?</p>
+        <a href="{% url 'initier_paiement_campay' groupe.id %}" class="btn btn-success">Accepter et payer ma cotisation</a>
+    {% endif %}
+</div>
+{% endblock %}
